@@ -1,0 +1,175 @@
+CRUD operation:
+================
+C=>insert record into database
+R=>Read data from database
+U=>update data in database
+D=>delete arecord from database
+
+form:               views.py          model
+name:itvedant==>data is extracted==>insert data
+rno:80           from form          database
+save                                table
+
+virtualenv env
+env\Scripta\activate
+pip install django
+django-admin startproject message
+cd message
+python manage.py startapp messageapp
+
+create form:
+==============
+name:----------
+Email id:----------
+Mobile No:-----------
+Message:----------
+submit
+CSRF verifaction failed
+====================
+csrf token in the form prevent cross site forgery attack
+Form data must be send along with token generated automatically.
+CSRF mechanism:
+===================
+1]{% csrf_token %} is added in the form a csrf token is genereted
+  and at the same time csrf token is stored in the system by djago
+  [cookies]
+2]when form is submitted with data,then csrf token is also 
+submitted.
+
+3]before form data is being inserted into database,that
+ form data needs to pass throoug this csrf middlware.
+  Role of csrf middlware:
+  ===================
+  csrf token recieved==csrf token stored in the
+  from form            cookies by django
+  If the above condition is true,then only the middle ware
+  allow you to move further to views.py  function.
+  otherwise your post request will be aborted
+  or forbidden.
+  Types of request:
+  ============
+  If the request is GET then request.method value is 'GET'
+  If the request is POST then request.method value is 'POST'
+
+Insert record into database:
+=============================
+step 1:create database in th DBMS
+       create databse message;
+step 2:database settings in settings.py file
+   settings.py:
+   -----------
+   DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'message10to1pm',
+        'HOST':'localhost'
+        'USER':'root',
+        'PASSWORD':'',
+        'PORT':'3306'
+    }
+
+step 3:pip install mysqlclient
+
+step 1:
+cretaing table that is definig models
+=======================
+Model is a representative of tble
+table:msg
+===========
+id   name   email          mobile   msg
+------------------------------------
+1   uesr1  user1@gamil.com  898989   testing
+create table msg(id int primary key auto_increment,
+                name varchar(40),
+                email varchar(40,),
+                mobile varchar(10),
+                msg varchar(200))
+1]Model=Table
+Model is class defined in models.py file in application
+folder
+class msg(models.Model):
+any model classdefined must be inherited
+from Model class which is inside models module.
+2]columns in tha table are data member in 
+model class.
+3]datatypes of column
+there are inbuilt functions in models
+module that are used to assign datatype to 
+data memnbers,which eventually going to be column in 
+table
+datatype                 function in models module
+==================================================
+varchar(length)         models.CharField(max_length)
+int                     model.IntegerField()
+floaat                  models.FloatField()
+email                   models.EmailField()
+
+step 2
+======
+python manage.py makemigrations
+python manage.py migrate
+
+insert record into database table:
+==================
+sql query to insert record:
+-----------------
+insert into mesageapp_msg(name,email,mobile,msg)
+values(n,e,mob,msg)
+
+ORM(object relational mapping):
+=====================
+ORM query to insert
+syntax:Modelname.objects.create(col1=value,col2=value...)
+eg:m=Msg.objects.create(name=n,email=e,mobile=mob,msg=msg)
+   m.save()
+
+  1]when above ORM query is executed o row inserted into table
+  2]row in a table is called as object in model.
+
+  Dashboard:
+  =============
+  it is web page in application where user can have all 
+  functionalities control
+  where user can
+  1]view all messages that he had send
+  2]edit a message
+  3]delete a message
+  4]link to create  or send message
+
+  view records:
+  -------------
+  db table:
+  fetch records from table
+  sql query:SELECT * FROM `messageapp_msg`
+
+  ORM query:
+  ==========
+  Modelname.objects.all()
+  eg:Msg.objects.all()=>reurns list of query set which contains
+                      objects
+
+delete
+========
+sql query:
+=============
+delete from tablename where id=values
+where id=value this where clause search a record in the database table
+and delte from tablename delte that searched record.
+
+step 1:fetch object or row to be deleted
+      m=Msg.objects.filter(id=rid)
+step 2:delete that objects  
+        m.delete()
+
+update(edit):
+=============
+step 1:show old data to user
+       when user click on edit link,application must show user
+       user previous data filled in the form.
+step 2:upadte new data todatabase
+
+step 1:fecth data from the database based on the edit id
+    m=Msg.objects.filter(id=rid)
+
+step 2:record fetched for editing must be shown to the user
+     by sending that fetched record to htm or browser.
